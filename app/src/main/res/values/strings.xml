@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SimpleImageViewer</string>
+    <string name="search">Search</string>
+    <string name="input_hint">Enter an image file path</string>
+    <string name="no_permission_error">Unable to retrieve images without permission.</string>
+    <string name="illegal_path_error">Illegal path in input.</string>
+    <string name="no_supported_files_error">No PNG or JPEG files in this directory.</string>
+</resources>
