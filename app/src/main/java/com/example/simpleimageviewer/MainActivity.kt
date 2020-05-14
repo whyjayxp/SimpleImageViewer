@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -26,22 +27,21 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.searchButton.setOnClickListener { processInput(it) }
+        binding.imageBox.setOnClickListener { showImage(it) }
     }
 
     private fun processInput(view : View) {
+        // hide input keyboard
         val iMM = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         iMM.hideSoftInputFromWindow(view.windowToken, 0)
-        if (hasPermission()) searchPath()
-    }
 
-    private fun hasPermission() : Boolean {
-        return if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        // check for permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
-            false
         } else {
-            true
+            searchPath()
         }
     }
 
@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun searchPath() {
         val inputPath = binding.pathInput.text.toString()
+        binding.imageBox.visibility = View.GONE
 
         val file = File(inputPath)
         if (inputPath == "" || !file.exists()) { // will there be SecurityException?
@@ -82,15 +83,21 @@ class MainActivity : AppCompatActivity() {
             if (isSupportedType(file)) {
                 // show image
                 binding.message.visibility = View.GONE
-                val intent = Intent(this, ImageActivity::class.java).apply {
-                    putExtra("imagePath", inputPath)
-                }
-                startActivity(intent)
+                binding.imageBox.setImageURI(Uri.fromFile(file))
+                binding.imageBox.tag = inputPath
+                binding.imageBox.visibility = View.VISIBLE
             } else {
                 // show filename
                 binding.message.text = file.name
                 binding.message.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun showImage(view : View) {
+        val intent = Intent(this, ImageActivity::class.java).apply {
+            putExtra("imagePath", view.tag.toString())
+        }
+        startActivity(intent)
     }
 }

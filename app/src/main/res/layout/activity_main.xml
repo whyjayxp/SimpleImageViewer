@@ -49,16 +49,19 @@
             tools:text="Placeholder message"
             tools:visibility="visible" />
 
-        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        <ImageView
             android:id="@+id/image_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="170dp"
+            android:layout_height="150dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/path_input" />
+            app:layout_constraintTop_toBottomOf="@+id/path_input"
+            app:srcCompat="@android:drawable/gallery_thumb"
+            tools:visibility="visible" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
