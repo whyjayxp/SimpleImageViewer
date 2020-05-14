@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.simpleimageviewer.databinding.ActivityMainBinding
@@ -21,13 +22,19 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var myAdapter: ImageGridAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.searchButton.setOnClickListener { processInput(it) }
-        binding.imageBox.setOnClickListener { showImage(it) }
+
+        myAdapter = ImageGridAdapter()
+        binding.imageGrid.apply {
+            layoutManager = GridLayoutManager(this@MainActivity, 2)
+            adapter = myAdapter
+        }
     }
 
     private fun processInput(view : View) {
@@ -62,12 +69,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun searchPath() {
         val inputPath = binding.pathInput.text.toString()
-        binding.imageBox.visibility = View.GONE
+        binding.message.text = ""
+        myAdapter.imageList = listOf()
 
         val file = File(inputPath)
         if (inputPath == "" || !file.exists()) { // will there be SecurityException?
             binding.message.text = getString(R.string.illegal_path_error)
-            binding.message.visibility = View.VISIBLE
             return
         }
 
@@ -76,20 +83,15 @@ class MainActivity : AppCompatActivity() {
             if (files == null || files.isEmpty()) { // why would files be null? (eg. storage/self)
                 binding.message.text = getString(R.string.no_supported_files_error)
             } else {
-                binding.message.text = (files.joinToString(separator = "\n"))
+                myAdapter.imageList = files.map { it.toString() }
             }
-            binding.message.visibility = View.VISIBLE
         } else {
             if (isSupportedType(file)) {
                 // show image
-                binding.message.visibility = View.GONE
-                binding.imageBox.setImageURI(Uri.fromFile(file))
-                binding.imageBox.tag = inputPath
-                binding.imageBox.visibility = View.VISIBLE
+                  myAdapter.imageList = listOf(inputPath)
             } else {
                 // show filename
                 binding.message.text = file.name
-                binding.message.visibility = View.VISIBLE
             }
         }
     }

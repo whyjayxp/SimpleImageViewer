@@ -43,24 +43,23 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:textSize="18sp"
-            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/path_input"
-            tools:text="Placeholder message"
-            tools:visibility="visible" />
+            tools:text="Placeholder message" />
 
-        <ImageView
-            android:id="@+id/image_box"
-            android:layout_width="170dp"
-            android:layout_height="150dp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/image_grid"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/path_input"
-            app:srcCompat="@android:drawable/gallery_thumb"
-            tools:visibility="visible" />
+            app:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
