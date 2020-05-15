@@ -25,6 +25,7 @@ class ImageActivity : AppCompatActivity() {
         title = imagePath.substring(imagePath.lastIndexOf("/") + 1)
 
         val state = savedInstanceState?.getSerializable("imageViewState") as ImageViewState?
+        binding.mainImage.setMinimumDpi(60)
         binding.mainImage.setImage(ImageSource.uri(imagePath), state)
     }
 
