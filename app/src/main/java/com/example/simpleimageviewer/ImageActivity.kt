@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import com.davemorrissey.labs.subscaleview.ImageSource
+import com.davemorrissey.labs.subscaleview.ImageViewState
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.simpleimageviewer.databinding.ActivityImageBinding
 
@@ -22,7 +23,16 @@ class ImageActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         title = imagePath.substring(imagePath.lastIndexOf("/") + 1)
-        binding.mainImage.setImage(ImageSource.uri(imagePath))
+
+        val state = savedInstanceState?.getSerializable("imageViewState") as ImageViewState?
+        binding.mainImage.setImage(ImageSource.uri(imagePath), state)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (binding.mainImage.state != null) {
+            outState.putSerializable("imageViewState", binding.mainImage.state)
+        }
     }
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
