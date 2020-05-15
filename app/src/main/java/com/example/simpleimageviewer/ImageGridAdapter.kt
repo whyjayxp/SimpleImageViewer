@@ -1,13 +1,13 @@
 package com.example.simpleimageviewer
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.davemorrissey.labs.subscaleview.ImageSource
 
-class ImageViewHolder(val imageView: ImageView) : RecyclerView.ViewHolder(imageView)
+class ImageViewHolder(val imageView: SubsamplingScaleImageView) : RecyclerView.ViewHolder(imageView)
 
 class ImageGridAdapter(data: Array<String> = arrayOf()) :
     RecyclerView.Adapter<ImageViewHolder>() {
@@ -22,13 +22,15 @@ class ImageGridAdapter(data: Array<String> = arrayOf()) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         // create new ImageView
-        val view = layoutInflater.inflate(R.layout.box_image, parent, false) as ImageView
+        val view = layoutInflater.inflate(R.layout.box_image, parent, false)
+                as SubsamplingScaleImageView
         return ImageViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val imagePath = imageList[position]
-        holder.imageView.setImageURI(Uri.parse(imagePath))
+        holder.imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
+        holder.imageView.setImage(ImageSource.uri(imagePath))
         holder.imageView.setOnClickListener {
             it.context.startActivity(Intent(it.context, ImageActivity::class.java).apply {
                 putExtra("imagePath", imagePath)
