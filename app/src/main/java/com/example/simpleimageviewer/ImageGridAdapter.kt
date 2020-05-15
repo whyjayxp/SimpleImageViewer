@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ImageViewHolder(val imageView: ImageView) : RecyclerView.ViewHolder(imageView)
 
-class ImageGridAdapter(data: List<String> = listOf()) :
+class ImageGridAdapter(data: Array<String> = arrayOf()) :
     RecyclerView.Adapter<ImageViewHolder>() {
     var imageList = data
         set(value) {

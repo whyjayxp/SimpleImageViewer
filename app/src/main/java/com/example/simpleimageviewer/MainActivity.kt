@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,11 +31,20 @@ class MainActivity : AppCompatActivity() {
 
         binding.searchButton.setOnClickListener { processInput(it) }
 
-        myAdapter = ImageGridAdapter()
+        myAdapter = ImageGridAdapter(savedInstanceState?.getStringArray("imageList") ?: arrayOf())
         binding.imageGrid.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, 2)
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                layoutManager = GridLayoutManager(this@MainActivity, 3)
+            } else {
+                layoutManager = GridLayoutManager(this@MainActivity, 2)
+            }
             adapter = myAdapter
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putStringArray("imageList", myAdapter.imageList)
     }
 
     private fun processInput(view : View) {
@@ -70,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     private fun searchPath() {
         val inputPath = binding.pathInput.text.toString()
         binding.message.text = ""
-        myAdapter.imageList = listOf()
+        myAdapter.imageList = arrayOf()
 
         val file = File(inputPath)
         if (inputPath == "" || !file.exists()) { // will there be SecurityException?
@@ -83,12 +93,12 @@ class MainActivity : AppCompatActivity() {
             if (files == null || files.isEmpty()) { // why would files be null? (eg. storage/self)
                 binding.message.text = getString(R.string.no_supported_files_error)
             } else {
-                myAdapter.imageList = files.map { it.toString() }
+                myAdapter.imageList = files.map { it.toString() }.toTypedArray()
             }
         } else {
             if (isSupportedType(file)) {
                 // show image
-                  myAdapter.imageList = listOf(inputPath)
+                  myAdapter.imageList = arrayOf(inputPath)
             } else {
                 // show filename
                 binding.message.text = file.name
