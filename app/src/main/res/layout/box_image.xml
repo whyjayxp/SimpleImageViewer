@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ssiv="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="150dp"
-    ssiv:panEnabled="false"
-    ssiv:zoomEnabled="false"
-    ssiv:quickScaleEnabled="false"
-    android:layout_margin="8dp" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:ssiv="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="160dp">
+
+        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+            android:id="@+id/image_display"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            ssiv:layout_constraintStart_toStartOf="parent"
+            ssiv:layout_constraintTop_toTopOf="parent"
+            ssiv:panEnabled="false"
+            ssiv:quickScaleEnabled="false"
+            ssiv:zoomEnabled="false" />
+
+    <TextView
+        android:id="@+id/image_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        ssiv:layout_constraintStart_toStartOf="parent"
+        ssiv:layout_constraintTop_toBottomOf="@+id/image_display" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
