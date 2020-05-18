@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -14,15 +15,10 @@ class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val text: TextView = itemView.findViewById(R.id.image_text)
 }
 
-class ImageGridAdapter(data: Array<String> = arrayOf()) :
+class ImageGridAdapter(private val viewModel: ImageGridViewModel) :
     RecyclerView.Adapter<ImageViewHolder>() {
-    var imageList = data
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
-    override fun getItemCount() = imageList.size
+    override fun getItemCount() = viewModel.imageList.value?.size ?: 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -31,7 +27,7 @@ class ImageGridAdapter(data: Array<String> = arrayOf()) :
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val imagePath = imageList[position]
+        val imagePath = viewModel.imageList.value?.get(position) ?: ""
         holder.image.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
         holder.image.setImage(ImageSource.uri(imagePath))
         holder.image.setOnClickListener {

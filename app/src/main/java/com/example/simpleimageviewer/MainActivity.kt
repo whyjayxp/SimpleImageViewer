@@ -15,6 +15,8 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var myAdapter: ImageGridAdapter
+    private lateinit var viewModel: ImageGridViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +36,11 @@ class MainActivity : AppCompatActivity() {
         binding.searchButton.setOnClickListener { processInput(it) }
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
-        myAdapter = ImageGridAdapter(savedInstanceState?.getStringArray("imageList") ?: arrayOf())
+        viewModel = ViewModelProvider(this).get(ImageGridViewModel::class.java)
+        myAdapter = ImageGridAdapter(viewModel)
+        viewModel.imageList.observe(this, Observer { _ ->
+            myAdapter.notifyDataSetChanged()
+        })
         binding.imageGrid.apply {
             if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 layoutManager = GridLayoutManager(this@MainActivity, 3)
@@ -42,11 +49,6 @@ class MainActivity : AppCompatActivity() {
             }
             adapter = myAdapter
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putStringArray("imageList", myAdapter.imageList)
     }
 
     private fun processInput(view : View) {
@@ -82,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     private fun searchPath() {
         val inputPath = binding.pathInput.text.toString()
         binding.message.text = ""
-        myAdapter.imageList = arrayOf()
+        viewModel.imageList.value = arrayOf()
 
         val file = File(inputPath)
         if (inputPath == "" || !file.exists()) { // will there be SecurityException?
@@ -95,12 +97,12 @@ class MainActivity : AppCompatActivity() {
             if (files == null || files.isEmpty()) { // why would files be null? (eg. storage/self)
                 binding.message.text = getString(R.string.no_supported_files_error)
             } else {
-                myAdapter.imageList = files.map { it.toString() }.toTypedArray()
+                viewModel.imageList.value = files.map { it.toString() }.toTypedArray()
             }
         } else {
             if (isSupportedType(file)) {
                 // show image
-                  myAdapter.imageList = arrayOf(inputPath)
+                  viewModel.imageList.value = arrayOf(inputPath)
             } else {
                 // show filename
                 binding.message.text = file.name
