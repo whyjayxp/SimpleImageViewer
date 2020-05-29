@@ -9,10 +9,12 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: ImageGridViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        with (window) {
+            requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+        }
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -37,7 +43,21 @@ class MainActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
         viewModel = ViewModelProvider(this).get(ImageGridViewModel::class.java)
-        myAdapter = ImageGridAdapter(viewModel)
+        myAdapter = ImageGridAdapter(viewModel, object : AnimalItemClickListener {
+            override fun onAnimalItemClick(
+                pos: Int,
+                imagePath: String,
+                shareImageView: SubsamplingScaleImageView
+            ) {
+                val intent = Intent(this@MainActivity, ImageActivity::class.java).apply {
+                    putExtra("imagePath", imagePath)
+                    putExtra("transitionName", shareImageView.transitionName)
+                }
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity,
+                    shareImageView, shareImageView.transitionName)
+                startActivity(intent, options.toBundle())
+            }
+        })
         viewModel.imageList.observe(this, Observer { _ ->
             myAdapter.notifyDataSetChanged()
         })
