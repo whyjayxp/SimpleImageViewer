@@ -30,6 +30,7 @@ public final class ImageSource {
     private int sHeight;
     private Rect sRegion;
     private boolean cached;
+    private boolean toScale; // load subsampled version to view dimensions
 
     private ImageSource(Bitmap bitmap, boolean cached) {
         this.bitmap = bitmap;
@@ -39,6 +40,7 @@ public final class ImageSource {
         this.sWidth = bitmap.getWidth();
         this.sHeight = bitmap.getHeight();
         this.cached = cached;
+        this.toScale = false;
     }
 
     private ImageSource(@NonNull Uri uri) {
@@ -58,6 +60,7 @@ public final class ImageSource {
         this.uri = uri;
         this.resource = null;
         this.tile = true;
+        this.toScale = false;
     }
 
     private ImageSource(int resource) {
@@ -65,6 +68,7 @@ public final class ImageSource {
         this.uri = null;
         this.resource = resource;
         this.tile = true;
+        this.toScale = false;
     }
 
     /**
@@ -188,6 +192,12 @@ public final class ImageSource {
         return this;
     }
 
+    public ImageSource scaleDown() {
+        this.tile = false;
+        this.toScale = true;
+        return this;
+    }
+
     /**
      * Use a region of the source image. Region must be set independently for the full size image and the preview if
      * you are using one.
@@ -258,4 +268,6 @@ public final class ImageSource {
     protected final boolean isCached() {
         return cached;
     }
+
+    protected final boolean isToScale() { return toScale; }
 }

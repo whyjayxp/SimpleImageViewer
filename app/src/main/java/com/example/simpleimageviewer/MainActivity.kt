@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,10 +14,12 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +27,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.example.simpleimageviewer.databinding.ActivityMainBinding
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -47,11 +52,16 @@ class MainActivity : AppCompatActivity() {
             override fun onAnimalItemClick(
                 pos: Int,
                 imagePath: String,
-                shareImageView: SubsamplingScaleImageView
+                shareImageView: ImageView
             ) {
                 val intent = Intent(this@MainActivity, ImageActivity::class.java).apply {
                     putExtra("imagePath", imagePath)
                     putExtra("transitionName", shareImageView.transitionName)
+                    val b: Bitmap = (shareImageView.drawable as BitmapDrawable).bitmap
+                    val stream : ByteArrayOutputStream = ByteArrayOutputStream()
+                    b.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    putExtra("bitmapArray", stream.toByteArray())
+                    putExtra("dimens", shareImageView.tag as IntArray)
                 }
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity,
                     shareImageView, shareImageView.transitionName)

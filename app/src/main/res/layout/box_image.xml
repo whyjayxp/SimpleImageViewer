@@ -7,17 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="160dp">
 
-        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        <ImageView
             android:id="@+id/image_display"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
             ssiv:layout_constraintStart_toStartOf="parent"
-            ssiv:layout_constraintTop_toTopOf="parent"
-            ssiv:panEnabled="false"
-            ssiv:quickScaleEnabled="false"
-            ssiv:zoomEnabled="false" />
+            ssiv:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/image_text"

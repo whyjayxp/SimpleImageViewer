@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -611,6 +612,7 @@ public class SubsamplingScaleImageView extends View {
      */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Log.i("ImageView", "onSizeChanged");
         debug("onSizeChanged %dx%d -> %dx%d", oldw, oldh, w, h);
         PointF sCenter = getCenter();
         if (readySent && sCenter != null) {
@@ -618,6 +620,7 @@ public class SubsamplingScaleImageView extends View {
             this.pendingScale = scale;
             this.sPendingCenter = sCenter;
         }
+        checkReady();
     }
 
     /**
@@ -626,6 +629,7 @@ public class SubsamplingScaleImageView extends View {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.i("ImageView", "onMeasure");
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
@@ -968,6 +972,7 @@ public class SubsamplingScaleImageView extends View {
      */
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.i("ImageView", "onDraw");
         super.onDraw(canvas);
         createPaints();
 
@@ -1778,6 +1783,7 @@ public class SubsamplingScaleImageView extends View {
      * Called by worker task when preview image is loaded.
      */
     private synchronized void onPreviewLoaded(Bitmap previewBitmap) {
+        Log.i("ImageView", "onPreviewLoaded");
         debug("onPreviewLoaded");
         if (bitmap != null || imageLoadedSent) {
             previewBitmap.recycle();

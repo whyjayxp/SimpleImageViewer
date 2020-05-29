@@ -90,6 +90,7 @@ public class SubsamplingScaleImageViewSharedTransition extends Transition {
         }
         final SubsamplingScaleImageView view = (SubsamplingScaleImageView) startValues.view;
         Point imgSize = new Point(view.getSWidth(), view.getSHeight());
+        view.resetScaleAndCenter();
         if (imgSize.x == 0 || imgSize.y == 0) {
             return null; //no image size, skip animation.
         }
@@ -107,8 +108,9 @@ public class SubsamplingScaleImageViewSharedTransition extends Transition {
             centerFrom = new PointF(imgSize.x / 2, imgSize.y / 2);
             scaleFrom = getMinIfTrue(startSize.x / (float) imgSize.x, startSize.y / (float) imgSize.y,
                     imageViewScaleType == FIT_CENTER);
-            scaleTo = getMinIfTrue(imgSize.x / (float) endSize.x, imgSize.y / (float) endSize.y,
-                    subsamplingScaleType == FIT_CENTER);
+            scaleTo = view.getScale();
+//            scaleTo = getMinIfTrue(imgSize.x / (float) endSize.x * view.getScale(), imgSize.y / (float) endSize.y * view.getScale(),
+//                    subsamplingScaleType == FIT_CENTER);
         } else {
             centerFrom = subsamplingState.getCenter();
             scaleFrom = subsamplingState.getScale();

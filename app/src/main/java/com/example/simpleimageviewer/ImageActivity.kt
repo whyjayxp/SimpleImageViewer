@@ -1,6 +1,7 @@
 package com.example.simpleimageviewer
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.Transition
@@ -29,9 +30,13 @@ class ImageActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_image)
-        // postponeEnterTransition()
+        postponeEnterTransition()
 
         val imagePath = intent.getStringExtra("imagePath") ?: ""
+        val byteArray = intent.getByteArrayExtra("bitmapArray")
+        val bitmap = if (byteArray == null) null else BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val width = intent.getIntArrayExtra("dimens")[0]
+        val height = intent.getIntArrayExtra("dimens")[1]
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -40,11 +45,12 @@ class ImageActivity : AppCompatActivity() {
         val state = savedInstanceState?.getSerializable("imageViewState") as ImageViewState?
         binding.mainImage.transitionName = intent.getStringExtra("transitionName")
         binding.mainImage.setMinimumDpi(50)
-        binding.mainImage.setImage(ImageSource.uri(imagePath), state)
+        binding.mainImage.setImage(ImageSource.uri(imagePath).dimensions(width, height),
+            if (bitmap == null) null else ImageSource.bitmap(bitmap), state)
         binding.mainImage.setOnImageEventListener(object :
             SubsamplingScaleImageView.DefaultOnImageEventListener() {
             override fun onReady() {
-                // startPostponedEnterTransition()
+                startPostponedEnterTransition()
                 binding.mainImage.setOnImageEventListener(null)
             }
         })
